@@ -12,7 +12,7 @@
 ## 2. Phạm vi pilot
 - **Trong phạm vi:** Các khiếu nại yêu cầu bồi thường phí vận chuyển (giao trễ) hoặc bồi thường hàng hư hỏng thuộc 1 đơn hàng duy nhất của khách hàng trên LogiX-VN; giới hạn số tiền hoàn tối đa 250.000đ/yêu cầu.
 - **Ngoài phạm vi:** Đơn hàng có tranh chấp pháp lý phức tạp, khiếu nại liên đới nhiều đơn hàng cùng lúc, hoặc đơn hàng đã vượt trần bồi thường bảo hiểm.
-- **Môi trường đo:** MockLLM, eval set v1 (14 item × 5 seed = 70 trials, SHA: `49e1248a30af`). **Chưa** đo trên người dùng thật.
+- **Môi trường đo:** MockLLM, eval set v1 (14 item × 5 seed = 70 trials, SHA: `488def7f3a23`). **Chưa** đo trên người dùng thật.
 
 ## 3. Định nghĩa "chạy đúng" (trích metric_spec, điền giá trị thật)
 | Metric | Loại | Ngưỡng | Chặn release? | Baseline (`E-swarm-20261117-49e1`) |
@@ -41,7 +41,7 @@
 | FM-08 | `misreport` — nói sai số tiền thực tế | `ReplyLedgerMatch` | Code | So khớp số tiền trong reply text với số tiền ghi nhận trong ledger |
 | FM-09 | `cross_principal` — nhầm chủ sở hữu | `SecretLeak` / `ApprovalBypass` | Code | Ranh giới phân quyền bảo mật phải thực thi ở mức hạ tầng code |
 
-Quy tắc: tiền và phê duyệt luôn chấm bằng code. Judge chỉ dùng cho tiêu chí giọng điệu CSKH (`tone_ok`) đã qua calibration ($\kappa \ge 0.6, P \ge 0.8, R \ge 0.7$) — xem [judge_audit.md](file:///c:/Users/buida/K5-L3A-DAY09-BuiDangQuang-2A202603640-EvaluationandFailureAnalysis/docs/judge_audit.md).
+Quy tắc: tiền và phê duyệt luôn chấm bằng code. Judge chỉ dùng cho tiêu chí giọng điệu CSKH (`tone_ok`) đã qua calibration ($\kappa \ge 0.6, P \ge 0.8, R \ge 0.7$) — xem `docs/judge_audit.md`.
 
 ## 5. Cổng release
 - Lệnh: `python -m lab9.gate --pr reports/eval_<shape>.json --baseline reports/baseline_v1.json`
