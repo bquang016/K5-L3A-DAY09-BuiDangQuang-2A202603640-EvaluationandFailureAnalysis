@@ -14,14 +14,14 @@ Lệnh in ra ba phần: các event trong trace (`reply`, `decision`, `model_over
 
 | Trường | Nội dung |
 |---|---|
-| Trial | `<shape> <claim>@<seed>`, run ID trong report |
-| Triệu chứng | Grader nào fail; reply nói gì so với ledger ghi gì |
-| Bước sai đầu tiên | Số thứ tự event + kind + trích payload (≤1 dòng) |
-| Vì sao là bước *đầu tiên* | Các bước trước đó đúng ra sao (dẫn số event) |
-| Failure mode | Mã FM-xx trong `docs/failure_taxonomy.md` |
-| Đối chứng | Cùng claim@seed trên shape `fixed`: bước đó khác thế nào |
-| Regression test | Tên test + grader/assert nào bắt được; đã thấy fail trên variant lỗi và pass trên `fixed` chưa |
-| Chưa chắc chắn | Điều trace không chứng minh được |
+| Trial | `seeded_regression C-002@11`, run_id: `run-seeded_regression-C-002-11` |
+| Triệu chứng | Grader Lab 8 fail: `status resolved != denied`. Ledger ghi hoàn 20.000đ (nhãn kỳ vọng: 0đ, denied). Reply nói: "Dạ, LogiX đã hoàn 20.000đ cho đơn O-202." |
+| Bước sai đầu tiên | Event 3 — kind: `model_override` — payload: `{"delay_days": 5}` |
+| Vì sao là bước *đầu tiên* | Event 1 (`handoff`) và Event 2 (`investigator`) hoàn toàn đúng: `lookup_order` tra cứu DB trả về `order_id: O-202` có `delay_days: 0`. Đến Event 3, agent mới bắt đầu ghi đè dữ liệu DB bằng số ngày trong ticket. |
+| Failure mode | `FM-03` (`ticket_trust — tin ticket hơn DB`) |
+| Đối chứng | Trên `fixed C-002@11`: hoàn toàn không có event `model_override`. Bước 3 là `quote {"amount_vnd": 0}`, status trả về `denied`, ledger hoàn 0đ, khớp 100% với nhãn. |
+| Regression test | Grader `DbFactKept` (trong `src/lab9/graders.py`) bắt event `model_override`; kiểm thử qua `test_override_event_breaks_db_fact` trong `src/tests/test_lab9_graders.py`. Đã xác nhận FAIL trên `seeded_regression` và PASS trên `fixed`. |
+| Chưa chắc chắn | Trace chỉ ghi nhận hành vi đè giá trị `delay_days: 5`, nhưng không ghi log chuỗi suy luận (chain-of-thought) bên trong của LLM về việc vì sao tin lời khách hàng hơn DB. |
 
 ## Quy tắc
 
