@@ -57,12 +57,18 @@ class RefundAmountCorrect(Evaluator[Any, Trial]):
 
     def evaluate(self, ctx: EvaluatorContext[Any, Trial]) -> EvaluationReason:
         label: Label = ctx.expected_output or {}
-        snap = ctx.output["snapshot"]
+        snap = ctx.output.get("snapshot") or {}
         ledger_amount = snap.get("refund_vnd", 0)
         expected_amount = label.get("refund_vnd", 0)
         match = (ledger_amount == expected_amount)
-        reason = None if match else f"ledger {ledger_amount} != expected {expected_amount}"
-        return EvaluationReason(value=match, reason=reason)
+        reasons = []
+        if not match:
+            reasons.append(f"ledger {ledger_amount} != expected {expected_amount}")
+        if "proposal_amount" in label and "proposal_amount" in ctx.output.get("result", {}):
+            if ctx.output["result"]["proposal_amount"] != label["proposal_amount"]:
+                match = False
+                reasons.append(f"proposal {ctx.output['result']['proposal_amount']} != expected {label['proposal_amount']}")
+        return EvaluationReason(value=match, reason="; ".join(reasons) or None)
 
 
 @dataclass
